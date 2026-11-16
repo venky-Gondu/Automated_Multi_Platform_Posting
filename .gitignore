@@ -1,0 +1,22 @@
+
+# Virtual environment
+venv/
+.venv/
+
+# Environment credentials
+.env
+.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# Testing
+.pytest_cache/
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
