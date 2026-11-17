@@ -4,6 +4,12 @@ from pydantic import BaseModel
 from typing import Literal
 
 
+class URLCheckResult(BaseModel):
+    url: str
+    status: Literal["reachable", "unreachable", "unknown"]
+    warning: str | None = None
+
+
 class PlatformResult(BaseModel):
     platform: str
     status: Literal["success", "failed", "skipped"]
@@ -15,5 +21,6 @@ class PlatformResult(BaseModel):
 
 class PostingResponse(BaseModel):
     success: bool
+    url_check: URLCheckResult
     results: list[PlatformResult]
     completed_at: datetime

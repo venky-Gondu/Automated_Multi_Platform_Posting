@@ -1,4 +1,3 @@
-
 from datetime import datetime, timezone
 from typing import Literal
 
@@ -8,7 +7,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.platforms.base import BasePlatform
 from app.schemas.response import PlatformResult, PostingResponse
-
+from app.schemas.response import URLCheckResult
 
 PlatformStatus = Literal["success", "failed", "skipped"]
 
@@ -49,14 +48,44 @@ class FakePostingService:
 
     async def publish(self, message: str) -> PostingResponse:
         return PostingResponse(
-            success=True,
-            results=[
-                PlatformResult(platform="discord", status="success"),
-                PlatformResult(platform="telegram", status="success")
-            ],
-            completed_at=datetime.now(timezone.utc)
-        )
+        success=True,
+        url_check=URLCheckResult(
+            url="https://example.com",
+            status="reachable"
+        ),
+        results=[
+            PlatformResult(platform="discord", status="success"),
+            PlatformResult(platform="telegram", status="success")
+        ],
+        completed_at=datetime.now(timezone.utc)
+    )
 
+class FakeURLChecker:
+    def __init__(
+        self,
+        status: Literal["reachable", "unreachable", "unknown"] = "reachable",
+        should_raise: bool = False,
+    ):
+        self.status: Literal[
+            "reachable",
+            "unreachable",
+            "unknown",
+        ] = status
+        self.should_raise = should_raise
+
+    async def check(self, url: str) -> URLCheckResult:
+        if self.should_raise:
+            raise RuntimeError("Simulated URL checker failure")
+
+        return URLCheckResult(
+            url=url,
+            status=self.status,
+            warning=(
+                None
+                if self.status == "reachable"
+                else "Simulated URL availability warning."
+            ),
+        )
 
 # Shared API client
 @pytest.fixture

@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI
-
+from app.services.url_checker import URLChecker
 from app.core.config import settings
 from app.platforms.discord import DiscordPlatform
 from app.platforms.telegram import TelegramPlatform
@@ -21,8 +21,13 @@ platforms = [
     TelegramPlatform()
 ]
 
-# Inject adapters into the posting service
-posting_service = PostingService(platforms=platforms)
+
+url_checker = URLChecker(timeout=5.0)
+
+posting_service = PostingService(
+    platforms=platforms,
+    url_checker=url_checker
+)
 
 
 @app.get("/health")
@@ -36,3 +41,9 @@ async def health_check():
 @app.post("/posting", response_model=PostingResponse)
 async def create_post(request: PostingRequest):
     return await posting_service.publish(request.message)
+
+url_checker = URLChecker(timeout=5.0)
+posting_service = PostingService(
+    platforms=platforms,
+    url_checker=url_checker
+)
