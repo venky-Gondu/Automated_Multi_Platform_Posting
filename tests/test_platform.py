@@ -12,7 +12,11 @@ class FakeResponse:
         pass
 
     def json(self):
-        return {"ok": True}
+        return {
+            "id": "123456789012345678",
+            "channel_id": "987654321098765432",
+            "guild_id": "111111111111111111"
+        }
 
 
 class FakeAsyncClient:
@@ -29,6 +33,37 @@ class FakeAsyncClient:
     async def post(self, *args, **kwargs):
         return FakeResponse()
 
+class FakeTelegramResponse:
+
+    def raise_for_status(self):
+        pass
+
+    def json(self):
+        return {
+            "ok": True,
+            "result": {
+                "message_id": 12345,
+                "chat": {
+                    "id": 123456789
+                }
+            }
+        }
+
+
+class FakeTelegramAsyncClient:
+
+    def __init__(self, *args, **kwargs):
+        pass
+
+    async def __aenter__(self):
+        return self
+
+    async def __aexit__(self, *args):
+        pass
+    
+
+    async def post(self, *args, **kwargs):
+        return FakeTelegramResponse()
 
 @pytest.mark.asyncio
 async def test_discord_success(monkeypatch):
@@ -48,8 +83,16 @@ async def test_discord_success(monkeypatch):
 
     result = await platform.publish("Hello Discord!")
 
-    assert result.platform == "discord"
     assert result.status == "success"
+    assert result.posted_id == "123456789012345678"
+    assert result.channel_id == "987654321098765432"
+
+    assert result.posted_url == (
+        "https://discord.com/channels/"
+        "111111111111111111/"
+        "987654321098765432/"
+        "123456789012345678"
+    )
 
 
 @pytest.mark.asyncio
@@ -84,8 +127,8 @@ async def test_telegram_success(monkeypatch):
     )
 
     monkeypatch.setattr(
-        "app.platforms.telegram.httpx.AsyncClient",
-        FakeAsyncClient
+    "app.platforms.telegram.httpx.AsyncClient",
+    FakeTelegramAsyncClient
     )
 
     platform = TelegramPlatform()

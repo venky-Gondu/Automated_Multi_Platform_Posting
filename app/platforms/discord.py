@@ -37,10 +37,39 @@ class DiscordPlatform(BasePlatform):
                 )
 
                 response.raise_for_status()
+                data = response.json()
+
+                if not isinstance(data, dict):
+                    raise ValueError("Invalid Discord response.")
+
+                message_id = data.get("id")
+                channel_id = data.get("channel_id")
+                guild_id = data.get("guild_id")
+
+                # Discord must return a message ID to confirm creation.
+                if not message_id or not channel_id:
+                    return PlatformResult(
+                        platform=self.name,
+                        status="failed",
+                        error="Discord did not return message identifiers."
+                    )
+
+                # A direct permalink requires the guild, channel and message IDs.
+                posted_url = None
+
+                if guild_id:
+                    posted_url = (
+                        f"https://discord.com/channels/"
+                        f"{guild_id}/{channel_id}/{message_id}"
+                    )
 
                 return PlatformResult(
                     platform=self.name,
-                    status="success"
+                    status="success",
+                    posted_id=str(message_id),
+                    channel_id=str(channel_id),
+                    posted_url=posted_url,
+                    public_access=None
                 )
 
         except httpx.TimeoutException:

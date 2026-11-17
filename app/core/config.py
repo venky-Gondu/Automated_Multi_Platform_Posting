@@ -6,6 +6,7 @@ class Settings(BaseSettings):
 
     # Discord
     discord_webhook_url: str | None = None
+    discord_guild_id: str | None = None
 
     # Telegram
     telegram_bot_token: str | None = None

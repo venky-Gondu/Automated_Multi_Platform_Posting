@@ -13,6 +13,8 @@ class URLCheckResult(BaseModel):
 class PlatformResult(BaseModel):
     platform: str
     status: Literal["success", "failed", "skipped"]
+    posted_id: str | None = None
+    channel_id: str | None = None
     posted_url: str | None = None
     public_access: bool | None = None
     posted_at: datetime | None = None
