@@ -358,6 +358,20 @@ The `ResultScreenshots` folder contains the captured API and platform results:
 - Successful API response
 - Validation error response
 
+### Result screenshots
+
+![API validation error](ResultScreenshots/api-success.png)
+
+![Discord result](ResultScreenshots/discord-results.png)
+
+![Telegram result](ResultScreenshots/telegram_results.png)
+
+![Mastodon result](ResultScreenshots/mastodon.png)
+
+![Test results](ResultScreenshots/test_results.png)
+
+![Terminal results](ResultScreenshots/terminal_result.png)
+
 ## 🔌 Extensibility
 
 The application uses a common platform interface.
