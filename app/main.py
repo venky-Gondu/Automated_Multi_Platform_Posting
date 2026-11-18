@@ -7,7 +7,7 @@ from app.platforms.telegram import TelegramPlatform
 from app.schemas.request import PostingRequest
 from app.schemas.response import PostingResponse
 from app.services.posting_service import PostingService
-
+from app.platforms.mastodon import MastodonPlatform
 
 app = FastAPI(
     title="Automated Multi-Platform Posting API",
@@ -18,7 +18,8 @@ app = FastAPI(
 # Register available platform adapters
 platforms = [
     DiscordPlatform(),
-    TelegramPlatform()
+    TelegramPlatform(),
+    MastodonPlatform()
 ]
 
 

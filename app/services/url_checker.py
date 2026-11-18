@@ -1,4 +1,3 @@
-
 import asyncio
 import ipaddress
 import socket
@@ -38,51 +37,66 @@ class URLChecker:
             return False
 
     async def check(self, url: str) -> URLCheckResult:
-        hostname = urlsplit(url).hostname
-
-        if not hostname or not await self._is_public_host(hostname):
+        try:
+            parsed_url = urlsplit(url)
+            hostname = parsed_url.hostname
+        except ValueError:
             return URLCheckResult(
                 url=url,
                 status="unreachable",
-                warning="URL does not resolve to a public address."
+                warning="URL is invalid.",
+            )
+
+        if (
+            parsed_url.scheme not in {"http", "https"}
+            or not hostname
+            or not await self._is_public_host(hostname)
+        ):
+            return URLCheckResult(
+                url=url,
+                status="unreachable",
+                warning="URL is invalid or does not resolve to a public address.",
             )
 
         try:
             async with httpx.AsyncClient(
                 timeout=self.timeout,
-                follow_redirects=False
+                follow_redirects=False,
             ) as client:
-
                 response = await client.head(url)
 
                 if response.status_code in (405, 501):
                     async with client.stream("GET", url) as response:
-                        status_code = response.status_code
-                else:
-                    status_code = response.status_code
+                        pass
 
-                if 200 <= status_code < 400:
+                if 200 <= response.status_code < 400:
                     return URLCheckResult(
                         url=url,
-                        status="reachable"
+                        status="reachable",
+                        warning=None,
                     )
 
                 return URLCheckResult(
                     url=url,
                     status="unreachable",
-                    warning=f"URL returned HTTP {status_code}."
+                    warning=f"URL returned HTTP {response.status_code}.",
                 )
 
         except httpx.TimeoutException:
             return URLCheckResult(
                 url=url,
                 status="unknown",
-                warning="URL availability check timed out."
+                warning="URL availability check timed out.",
             )
-
+        except httpx.InvalidURL:
+            return URLCheckResult(
+                url=url,
+                status="unknown",
+                warning="Invalid URL.",
+            )
         except httpx.RequestError:
             return URLCheckResult(
                 url=url,
                 status="unknown",
-                warning="Unable to connect to the URL."
+                warning="Unable to connect to the URL.",
             )

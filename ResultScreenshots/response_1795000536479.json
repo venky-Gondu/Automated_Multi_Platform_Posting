@@ -1,0 +1,41 @@
+{
+  "success": true,
+  "url_check": {
+    "url": "https://google.com",
+    "status": "reachable",
+    "warning": null
+  },
+  "results": [
+    {
+      "platform": "discord",
+      "status": "success",
+      "posted_id": "1572570954372104",
+      "channel_id": "1571853681984",
+      "posted_url": null,
+      "public_access": null,
+      "posted_at": "2026-11-18T11:15:36.427658Z",
+      "error": null
+    },
+    {
+      "platform": "telegram",
+      "status": "success",
+      "posted_id": null,
+      "channel_id": null,
+      "posted_url": "https://t.me/autopost96/6",
+      "public_access": null,
+      "posted_at": "2026-11-18T11:15:36.427658Z",
+      "error": null
+    },
+    {
+      "platform": "mastodon",
+      "status": "success",
+      "posted_id": null,
+      "channel_id": null,
+      "posted_url": "https://mastodon.social/@HexGroot/117637154906684137",
+      "public_access": null,
+      "posted_at": "2026-11-18T11:15:32.632000Z",
+      "error": null
+    }
+  ],
+  "completed_at": "2026-11-18T11:15:36.427658Z"
+}
